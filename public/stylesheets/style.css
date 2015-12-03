@@ -1,11 +1,43 @@
+.form-signin {
+  width: 320px;
+  height: 300px;
+  padding: 0;
+  top: 10em;
+  left: 50%;
+  position: absolute;
+  margin: 0 0 0 -160px; }
+  .form-signin .checkbox {
+    margin-bottom: 10px;
+    font-weight: normal; }
+  .form-signin .form-control {
+    position: relative;
+    height: auto;
+    box-sizing: border-box;
+    padding: 10px;
+    font-size: 16px; }
+  .form-signin .form-control:focus {
+    z-index: 2; }
+  .form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0; }
+  .form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0; }
+
 @charset "UTF-8";
 html,
 body {
   width: 100%;
-  height: 100%; }
+  height: 100%;
+  margin-top: 35px; }
+  html > .main-content,
+  body > .main-content {
+    min-height: 400px; }
 
 body {
-  font-family: Merriweather,'나눔고딕','Helvetica Neue',Arial,sans-serif; }
+  font-family: 14px Merriweather,'나눔고딕',Arial,sans-serif; }
 
 hr {
   max-width: 50px;
@@ -18,12 +50,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Open Sans','Helvetica Neue',Arial,sans-serif; }
-
-p {
-  margin-bottom: 20px;
-  font-size: 16px;
-  line-height: 1.5; }
+  font-family: 'Open Sans','나눔고딕',Arial,sans-serif; }
 
 .text-center {
   display: table-cell;
@@ -36,10 +63,7 @@ p {
 .btn-primary {
   border-color: #f05f40;
   color: #fff;
-  background-color: #f05f40;
-  -webkit-transition: all .35s;
-  -moz-transition: all .35s;
-  transition: all .35s; }
+  background-color: #f05f40; }
 
 .btn-primary:hover,
 .btn-primary:focus,
@@ -51,17 +75,8 @@ p {
   color: #fff;
   background-color: #ee4b28; }
 
-.btn {
-  border: 0;
-  border-radius: 300px;
-  text-transform: uppercase;
-  font-family: 'Open Sans','Helvetica Neue',Arial,sans-serif;
-  font-weight: 700; }
-
-.btn-xl {
-  padding: 15px 30px; }
-
 header {
+  margin-top: -35px;
   display: table;
   position: relative;
   width: 100%;
@@ -85,6 +100,13 @@ header {
     font-size: 16px;
     font-weight: 400;
     color: rgba(255, 255, 255, 0.7); }
+
+.form-actions {
+  padding: 19px 20px 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+  border-top: 1px solid #e5e5e5; }
 
 .footer {
   width: 100%;

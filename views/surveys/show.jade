@@ -1,0 +1,11 @@
+extends ../layout
+  
+block content
+  .container
+    h1= survey.title
+    h3
+    .well= survey.content
+
+    hr
+    p
+      a.btn.btn-default(href='/surveys/') 목록

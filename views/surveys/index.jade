@@ -1,0 +1,26 @@
+extends ../layout
+
+block content
+  .container
+    h1.page-header 설문 목록
+    
+    table.table.table-striped.table-bordered
+      thead
+        tr
+          th 제목
+          th 작성일
+          th 응답자 수
+          th
+      tbody
+        each survey in surveys
+          tr
+            td
+              a(href='/surveys/#{survey.id}')= survey.title
+            td= moment(survey.createdAt).format('YYYY/MM/DD')
+            td= survey.numComment
+            td
+              a.btn.btn-xs.btn-default(href='/surveys/#{survey._id}/edit') 수정
+              | 
+              a.btn.btn-xs.btn-default(href='/surveys/#{survey._id}?_method=DELETE') 삭제
+    
+    a.btn.btn-primary(href='/surveys/new') 설문작성
