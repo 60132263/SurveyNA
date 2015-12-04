@@ -1,0 +1,15 @@
+extends ../layout
+
+block content
+  .container
+    if question.type==='주관식'  
+      h1.page-header 주관식 질문 수정
+      form(action='/surveys/question/#{question._id}?_method=PUT', method='POST')
+        .form-group
+          label(for='content') 질문
+          input.form-control(type='text', id='content', name='content', placeholder='Question details', value=question.content)
+          
+        div.form-actions
+          a.btn.btn-default(href='javascript:window.history.back();') 뒤로 
+          | 
+          button.btn.btn-primary(type='submit') 수정

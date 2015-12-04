@@ -4,6 +4,7 @@ var mongoose = require('mongoose'),
 
 var schema = new Schema({
   type: {type: String, required: true, trim: true},
+  seq: {type: Number, default: 0},
   survey_id: {type: Schema.Types.ObjectId, required: true, trim: true},
   content: {type: String, required: true, trim: true}
 }, {

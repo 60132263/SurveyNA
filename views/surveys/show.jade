@@ -13,14 +13,16 @@ block content
     table.table
       tr
         th 유형
+        th 번호
         th 질문
         th 관리
       each question in questions
         tr
           td= question.type
+          td= question.seq
           td= question.content
           td
-            a.btn.btn-xs.btn-default(href='/surveys/#{question._id}/edit') 수정
+            a.btn.btn-xs.btn-default(href='/surveys/question/#{question._id}/edit') 수정
             | 
             a.btn.btn-xs.btn-default(href='/surveys/question/#{question._id}?_method=DELETE') 삭제
     

@@ -85,12 +85,44 @@ router.put('/:id', function(req, res, next) {
   });
 });
 
+/* EDIT question*/
+router.get('/question/:id/edit', function(req, res, next) {
+  Question.findById(req.params.id, function(err, question) {
+    if (err) {
+      return next(err);
+    }
+    res.render('surveys/edit', {question: question});
+  });
+});
+
+router.put('/question/:id', function(req, res, next) {
+  Question.findById(req.params.id, function(err, question) {
+    if (err) {
+      return next(err);
+    }
+    question.content = req.body.content;
+
+    question.save(function(err) {
+      if (err) {
+        return next(err);
+      }
+      req.flash('success', '질문이 수정되었습니다.');
+      res.redirect('/surveys/' + question.survey_id);
+    });
+  });
+});
+
 /* DELETE survey*/
 router.delete('/:id', function(req, res, next) {
   Survey.findOneAndRemove({_id: req.params.id}, function(err) {
     if (err) {
       return next(err);
     }
+    Question.findOneAndRemove({survey_id: req.params.id}, function(err) {
+      if (err) {
+        return next(err);
+      }
+    });
     req.flash('success', '설문이 삭제되었습니다.');
     res.redirect('/surveys');
   });
@@ -102,6 +134,20 @@ router.delete('/question/:id', function(req, res, next) {
     if (err) {
       return next(err);
     }
+    Question.find({seq: {$gt: question.seq}}, function(err, questions) {
+      console.log(questions);
+      if (err) {
+        return next(err);
+      }
+      for(var i=0; i<questions.length; i++) {
+        questions[i].seq = questions[i].seq-1;
+        questions[i].save(function(err) {
+          if (err) {
+            return next(err);
+          }
+        });
+      }
+    });
     Survey.findByIdAndUpdate(question.survey_id, {$inc: {numComment: -1}}, function(err) {
       if (err) {
         return next(err);
@@ -112,22 +158,24 @@ router.delete('/question/:id', function(req, res, next) {
   });
 });
 
+/* NEW question*/
 router.post('/:id/questions', function(req, res, next) {
   var question = new Question({
     survey_id: req.params.id,
     content: req.body.content,
     type: req.body.type
   });
-  question.save(function(err) {
+  Survey.findByIdAndUpdate(req.params.id, {$inc: {numComment: 1}}, function(err, survey) {
     if (err) {
       return next(err);
     }
-    Survey.findByIdAndUpdate(req.params.id, {$inc: {numComment: 1}}, function(err) {
+    question.seq = survey.numComment+1;
+    question.save(function(err) {
       if (err) {
         return next(err);
       }
-      res.redirect('/surveys/' + req.params.id);
     });
+    res.redirect('/surveys/' + req.params.id);
   });
 });
 
