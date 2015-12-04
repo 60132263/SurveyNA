@@ -1,6 +1,7 @@
 var express = require('express'),
     User = require('../models/User'),
-    Survey = require('../models/Survey');
+    Survey = require('../models/Survey'),
+    Question = require('../models/Question');
 var router = express.Router();
 
 function needAuth(req, res, next) {
@@ -22,8 +23,9 @@ router.get('/', needAuth, function(req, res, next) {
   });
 });
 
+/* NEW survey*/
 router.get('/new', function(req, res, next) {
-  res.render('surveys/new');
+  res.render('surveys/new', {survey: {}});
 });
 
 router.post('/', function(req, res, next) {
@@ -32,21 +34,100 @@ router.post('/', function(req, res, next) {
     title: req.body.title,
     content: req.body.content
   });
-
-  survey.save(function(err) {
+  survey.save(function(err, doc) {
     if (err) {
       return next(err);
     }
-    res.redirect('/surveys');
+    res.redirect('/surveys/' + doc.id);
   });
 });
 
+/* SHOW survey*/
 router.get('/:id', function(req, res, next) {
   Survey.findById(req.params.id, function(err, survey) {
     if (err) {
       return next(err);
     }
-    res.render('surveys/show', {survey: survey});
+    Question.find({survey_id: survey.id}, function(err, questions) {
+      if (err) {
+        return next(err);
+      }
+      res.render('surveys/show', {survey: survey, questions: questions});
+    });
+  });
+});
+
+/* EDIT survey*/
+router.get('/:id/edit', function(req, res, next) {
+  Survey.findById(req.params.id, function(err, survey) {
+    if (err) {
+      return next(err);
+    }
+    res.render('surveys/new', {survey: survey});
+  });
+});
+
+router.put('/:id', function(req, res, next) {
+  Survey.findById(req.params.id, function(err, survey) {
+    if (err) {
+      return next(err);
+    }
+    survey.title = req.body.title;
+    survey.content = req.body.content;
+
+    survey.save(function(err) {
+      if (err) {
+        return next(err);
+      }
+      req.flash('success', '설문이 수정되었습니다.');
+      res.redirect('/surveys');
+    });
+  });
+});
+
+/* DELETE survey*/
+router.delete('/:id', function(req, res, next) {
+  Survey.findOneAndRemove({_id: req.params.id}, function(err) {
+    if (err) {
+      return next(err);
+    }
+    req.flash('success', '설문이 삭제되었습니다.');
+    res.redirect('/surveys');
+  });
+});
+
+/* DELETE question*/
+router.delete('/question/:id', function(req, res, next) {
+  Question.findOneAndRemove({_id: req.params.id}, function(err, question) {
+    if (err) {
+      return next(err);
+    }
+    Survey.findByIdAndUpdate(question.survey_id, {$inc: {numComment: -1}}, function(err) {
+      if (err) {
+        return next(err);
+      }
+      req.flash('success', '질문이 삭제되었습니다.');
+      res.redirect('/surveys/' + question.survey_id);
+    });
+  });
+});
+
+router.post('/:id/questions', function(req, res, next) {
+  var question = new Question({
+    survey_id: req.params.id,
+    content: req.body.content,
+    type: req.body.type
+  });
+  question.save(function(err) {
+    if (err) {
+      return next(err);
+    }
+    Survey.findByIdAndUpdate(req.params.id, {$inc: {numComment: 1}}, function(err) {
+      if (err) {
+        return next(err);
+      }
+      res.redirect('/surveys/' + req.params.id);
+    });
   });
 });
 

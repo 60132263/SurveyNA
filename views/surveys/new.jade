@@ -2,15 +2,25 @@ extends ../layout
 
 block content
   .container
-    h1.page-header 설문 작성
-    form(action='/surveys', method='POST')
+    if survey.id
+      h1.page-header 설문 수정
+    else
+      h1.page-header 설문 작성
+      
+    form(action = (survey.id) ? "/surveys/#{survey.id}?_method=PUT" : "/surveys", method='POST')
       .form-group
         label(for='title') 제목
-        input.form-control(name='title')
+        input.form-control(type='title', id='title', name='title', placeholder='title', value=survey.title)
       .form-group
         label(for='content') 내용
-        textarea.form-control(name='content')
+        textarea.form-control(id='content', rows='10', name='content', placeholder='content here')= survey.content
+
       div.form-actions
         a.btn.btn-default(href='javascript:window.history.back();') 뒤로 
-        | &nbsp;
-        button.btn.btn-primary(type='submit') 설문 작성
+        | 
+        button.btn.btn-primary(type='submit') 완료
+
+        
+        
+        
+        
