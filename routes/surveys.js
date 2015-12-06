@@ -101,6 +101,10 @@ router.put('/question/:id', function(req, res, next) {
       return next(err);
     }
     question.content = req.body.content;
+    question.selection[0].selection1 = req.body.selection1
+    question.selection[0].selection2 = req.body.selection2
+    question.selection[0].selection3 = req.body.selection3
+    question.selection[0].selection4 = req.body.selection4
 
     question.save(function(err) {
       if (err) {
@@ -114,11 +118,11 @@ router.put('/question/:id', function(req, res, next) {
 
 /* DELETE survey*/
 router.delete('/:id', function(req, res, next) {
-  Survey.findOneAndRemove({_id: req.params.id}, function(err) {
+  Survey.findOneAndRemove(req.params.id, function(err) {
     if (err) {
       return next(err);
     }
-    Question.findOneAndRemove({survey_id: req.params.id}, function(err) {
+    Question.find({survey_id: req.params.id}).remove(function(err, questions) {
       if (err) {
         return next(err);
       }
@@ -135,7 +139,6 @@ router.delete('/question/:id', function(req, res, next) {
       return next(err);
     }
     Question.find({seq: {$gt: question.seq}}, function(err, questions) {
-      console.log(questions);
       if (err) {
         return next(err);
       }
@@ -165,17 +168,44 @@ router.post('/:id/questions', function(req, res, next) {
     content: req.body.content,
     type: req.body.type
   });
-  Survey.findByIdAndUpdate(req.params.id, {$inc: {numComment: 1}}, function(err, survey) {
+  question.selection.push({
+    selection1: req.body.selection1,
+    selection2: req.body.selection2,
+    selection3: req.body.selection3,
+    selection4: req.body.selection4
+  });
+
+  question.save(function(err){
     if (err) {
       return next(err);
     }
-    question.seq = survey.numComment+1;
-    question.save(function(err) {
+    Survey.findByIdAndUpdate(req.params.id, {$inc: {numComment: 1}}, function(err, survey) {
       if (err) {
         return next(err);
       }
+      question.seq = survey.numComment+1;
+      question.save(function(err) {
+        if (err) {
+          return next(err);
+        }
+      });
+      res.redirect('/surveys/' + req.params.id);
     });
-    res.redirect('/surveys/' + req.params.id);
+  })
+});
+
+/* SHOW survey sheet*/
+router.get('/:id/sheet', function(req, res, next) {
+  Survey.findById(req.params.id, function(err, survey) {
+    if (err) {
+      return next(err);
+    }
+    Question.find({survey_id: survey.id}, function(err, questions) {
+      if (err) {
+        return next(err);
+      }
+      res.render('answers/sheet', {survey: survey, questions: questions});
+    });
   });
 });
 

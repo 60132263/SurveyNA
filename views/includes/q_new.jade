@@ -1,0 +1,33 @@
+h3 주관식 질문 추가
+form.form-inline(action='/surveys/' + survey._id + '/questions', method='POST')
+  .form-group
+    label.sr-only(for='content') content
+    input.form-control(name='content', size=40, placeholder='Question details')
+    input.form-control(name='type', type='hidden', value='주관식')
+    button.btn.btn-info 질문저장
+
+br
+h3 객관식 질문 추가
+form.form-inline(action='/surveys/' + survey._id + '/questions', method='POST')
+  h5 질문
+  .form-group
+    label.sr-only(for='content') content
+    input.form-control(name='content', size=40, placeholder='Question details')
+    input.form-control(name='type', type='hidden', value='객관식')
+  h5 선택지
+  .form-group
+    label.sr-only(for='selection') selection
+    input.form-control(name='selection1', size=40, placeholder='selection1 details')
+    input.form-control(name='selection2', size=40, placeholder='selection2 details')
+    input.form-control(name='selection3', size=40, placeholder='selection3 details')
+    input.form-control(name='selection4', size=40, placeholder='selection4 details')  
+    button.btn.btn-info 질문저장
+    
+br
+h3 의견 추가
+form.form-inline(action='/surveys/' + survey._id + '/questions', method='POST')
+  .form-group
+    label.sr-only(for='content') content
+    input.form-control(name='content', size=40, placeholder='Question details')
+    input.form-control(name='type', type='hidden', value='의견')
+    button.btn.btn-info 질문저장
