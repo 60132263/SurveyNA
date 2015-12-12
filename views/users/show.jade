@@ -14,11 +14,11 @@ block content
       if user.facebook
         li Facebook 
           img.img-circle(src='#{user.facebook.photo}')
-    hr
+
     p
       if user.pos===0
-        a.btn.btn-default(href='/users/') 목록
+        a.btn.btn-default(href='/users/') 관리
         | 
       a.btn.btn-default(href='/users/#{user._id}/edit') 수정
       | 
-      a.btn.btn-default(href='/users/#{user._id}?_method=DELETE') 삭제
+      a.btn.btn-default(href='/users/#{user._id}?_method=DELETE') 탈퇴

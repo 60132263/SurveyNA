@@ -6,24 +6,26 @@ block content
     h5= survey.createdAt 
     h3
     .well= survey.content
+    h5 응답자의 이메일 주소를 입력해주세요. (중복설문방지)
+    .form-inline
+      input.form-control(name='email', size=40, placeholder='eamil here')
     br
     br
     h3 질문 목록 (#{survey.numComment})
     
     br
-    ul.list-unstyled
+    ul#sheet.list-unstyled
       each question in questions
         li
           b Qustion. #{question.seq} #{question.type}
+          //- form(action = "/surveys/quesiton/#{quesiton.id}?_method=PUT" method='POST')
           p= question.content
           if question.type === '주관식'
             .form-inline
               input.form-control(name='answer', size=40, placeholder='answer here') 
-              &nbsp; 
           if question.type === '의견'
             .form-group
               textarea.form-control(name='answer', rows=2 placeholder='answer here') 
-              &nbsp; 
           if question.type === '객관식'
             .radio
               label
@@ -40,8 +42,8 @@ block content
             .radio
               label
                 input(type='radio', name='selection', value=question.selection[0].selection4) 
-                span #{question.selection[0].selection4}  
+                span #{question.selection[0].selection4}
     br
     br
-    a.btn.btn-default(href='/surveys/') 응답전송
+    a.btn.btn-default(href='/surveys/thanks') 응답전송
     

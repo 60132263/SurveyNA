@@ -101,10 +101,10 @@ router.put('/question/:id', function(req, res, next) {
       return next(err);
     }
     question.content = req.body.content;
-    question.selection[0].selection1 = req.body.selection1
-    question.selection[0].selection2 = req.body.selection2
-    question.selection[0].selection3 = req.body.selection3
-    question.selection[0].selection4 = req.body.selection4
+    question.selection[0].selection1 = req.body.selection1;
+    question.selection[0].selection2 = req.body.selection2;
+    question.selection[0].selection3 = req.body.selection3;
+    question.selection[0].selection4 = req.body.selection4;
 
     question.save(function(err) {
       if (err) {
@@ -144,11 +144,7 @@ router.delete('/question/:id', function(req, res, next) {
       }
       for(var i=0; i<questions.length; i++) {
         questions[i].seq = questions[i].seq-1;
-        questions[i].save(function(err) {
-          if (err) {
-            return next(err);
-          }
-        });
+        questions[i].save();
       }
     });
     Survey.findByIdAndUpdate(question.survey_id, {$inc: {numComment: -1}}, function(err) {
@@ -191,7 +187,7 @@ router.post('/:id/questions', function(req, res, next) {
       });
       res.redirect('/surveys/' + req.params.id);
     });
-  })
+  });
 });
 
 /* SHOW survey sheet*/

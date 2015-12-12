@@ -3,7 +3,9 @@ extends ../layout
 block content
   .container
     h1= survey.title
-    h5= survey.createdAt 
+    h5= survey.createdAt
+    h5 설문URL: 
+      a(href='/surveys/#{survey.id}/sheet') localhost:3000/surveys/#{survey.id}/sheet 
     h3
     .well= survey.content
     br
