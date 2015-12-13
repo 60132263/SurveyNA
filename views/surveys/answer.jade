@@ -1,0 +1,53 @@
+extends ../layout
+
+block content
+  .container
+    h1 결과 확인
+    h5= survey.title
+    h5= survey.createdAt 
+    h3
+    .well= survey.content
+
+      br
+      br
+      h3 질문 목록 (#{survey.numComment})
+      
+      br
+      ul#sheet.list-unstyled
+        each question in questions
+          li
+            b Qustion. #{question.seq} #{question.type}
+            p= question.content
+            if question.type === '주관식'
+              ul#sheet.list-unstyled
+                each answer in answers
+                  li
+                    if answer.question_id === question.id
+                      span #{answer.answer}
+              
+            if question.type === '의견'
+              ul#sheet.list-unstyled
+                each answer in answers
+                  li
+                    if answer.question_id === question.id
+                      span #{answer.answer}
+            
+            if question.type === '객관식'
+              .radio
+                label
+                  input(type='radio', name=question.id, value=question.selection[0].selection1) 
+                  span #{question.selection[0].selection1}
+              .radio
+                label
+                  input(type='radio', name=question.id, value=question.selection[0].selection2)
+                  span #{question.selection[0].selection2}
+              .radio
+                label
+                  input(type='radio', name=question.id, value=question.selection[0].selection3)
+                  span #{question.selection[0].selection3}
+              .radio
+                label
+                  input(type='radio', name=question.id, value=question.selection[0].selection4) 
+                  span #{question.selection[0].selection4}
+      div.form-actions          
+        button.btn.btn-default(type='submit') 응답전송

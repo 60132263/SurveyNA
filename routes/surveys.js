@@ -1,7 +1,8 @@
 var express = require('express'),
     User = require('../models/User'),
     Survey = require('../models/Survey'),
-    Question = require('../models/Question');
+    Question = require('../models/Question'),
+    Answer = require('../models/Answer');
 var router = express.Router();
 
 function needAuth(req, res, next) {
@@ -147,7 +148,7 @@ router.delete('/question/:id', function(req, res, next) {
         questions[i].save();
       }
     });
-    Survey.findByIdAndUpdate(question.survey_id, {$inc: {numComment: -1}}, function(err) {
+    Survey.findByIdAndUpdate(question.survey_id, {$inc: {numQuestion: -1}}, function(err) {
       if (err) {
         return next(err);
       }
@@ -175,11 +176,11 @@ router.post('/:id/questions', function(req, res, next) {
     if (err) {
       return next(err);
     }
-    Survey.findByIdAndUpdate(req.params.id, {$inc: {numComment: 1}}, function(err, survey) {
+    Survey.findByIdAndUpdate(req.params.id, {$inc: {numQuestion: 1}}, function(err, survey) {
       if (err) {
         return next(err);
       }
-      question.seq = survey.numComment+1;
+      question.seq = survey.numQuestion+1;
       question.save(function(err) {
         if (err) {
           return next(err);
@@ -200,7 +201,89 @@ router.get('/:id/sheet', function(req, res, next) {
       if (err) {
         return next(err);
       }
-      res.render('answers/sheet', {survey: survey, questions: questions});
+      res.render('surveys/sheet', {survey: survey, questions: questions});
+    });
+  });
+});
+
+/* NEW answer*/
+router.post('/:id/sheet/thanks', function(req, res, next) {
+  Question.find({survey_id: req.params.id}, function(err, questions) {
+    if (err) {
+      return next(err);
+    }
+    var value = [];
+    var key = [];
+    var cnt = 0;
+    for (var i in req.body)
+    {
+      key[cnt] = i;
+      value[cnt] = req.body[i];
+      cnt++;
+    }
+    var ans = '';
+    for(var k=0; k<questions.length; k++) {
+      for(var j in key) {
+        if(key[j]===questions[k].id) {
+          ans = value[j];
+        }
+      }
+
+      if(questions[k].type==='객관식') {
+        Answer.findOne({question_id: questions[k].id}, function(err, temp) {
+          if (temp===null) {
+            temp = new Answer({
+              survey_id: req.params.id,
+              question_id: questions[k].id,
+              email: req.body.email
+            });
+          }
+          if(ans==1) {
+            temp.selection[0].selection1 = answer.selection[0].selection1+1;
+          } else if(ans==2) {
+            temp.selection[0].selection2 = answer.selection[0].selection2+1;
+          } else if(ans==3) {
+            temp.selection[0].selection3 = answer.selection[0].selection3+1;
+          } else if(ans==4) {
+            temp.selection[0].selection4 = answer.selection[0].selection4+1;
+          }
+        });
+      } else {
+        var answer = new Answer({
+          survey_id: req.params.id,
+          question_id: questions[k].id,
+          answer: ans,
+          email: req.body.email
+        });
+        answer.answer = ans;
+      }
+      answer.save();
+    }
+    Survey.findByIdAndUpdate(req.params.id, {$inc: {numAnswer: 1}}, function(err, survey) {
+      if (err) {
+        return next(err);
+      }
+      res.render('surveys/thanks');
+    });
+  });
+});
+
+/* SHOW answer*/
+router.get('/:id/answer', function(req, res, next) {
+  Survey.findById(req.params.id, function(err, survey) {
+    if (err) {
+      return next(err);
+    }
+    Question.find({survey_id: survey.id}, function(err, questions) {
+      if (err) {
+        return next(err);
+      }
+      Answer.find({survey_id: survey.id}, function(err, answers) {
+        if (err) {
+          return next(err);
+        }
+        res.render('surveys/answer', {survey: survey, questions: questions, answers: answers});
+      });
     });
   });
 });

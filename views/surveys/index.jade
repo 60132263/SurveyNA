@@ -9,7 +9,7 @@ block content
         tr
           th 제목
           th 작성일
-          th 질문 수
+          th 응답자 수
           th
       tbody
         each survey in surveys
@@ -17,7 +17,7 @@ block content
             td
               a(href='/surveys/#{survey.id}')= survey.title
             td= moment(survey.createdAt).format('YYYY/MM/DD')
-            td= survey.numComment
+            td= survey.numAnswer
             td
               a.btn.btn-xs.btn-default(href='/surveys/#{survey._id}/edit') 수정
               | 

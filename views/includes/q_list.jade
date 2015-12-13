@@ -1,4 +1,4 @@
-h3 질문 목록 (#{survey.numComment})
+h3 질문 목록 (#{survey.numQuestion})
 
 br
 ul#sheet.list-unstyled
@@ -9,17 +9,13 @@ ul#sheet.list-unstyled
       if question.type === '주관식'
         .form-inline
           input.form-control(name='answer', size=40, placeholder='answer here') 
-          &nbsp; 
-        a.btn.btn-xs.btn-default(href='/surveys/question/#{question._id}/edit') 수정 
-        &nbsp;
-        a.btn.btn-xs.btn-default(href='/surveys/question/#{question._id}?_method=DELETE') 삭제
+        a#q_button.btn.btn-xs.btn-default(href='/surveys/question/#{question._id}/edit') 수정 
+        a#q_button.btn.btn-xs.btn-default(href='/surveys/question/#{question._id}?_method=DELETE') 삭제
       if question.type === '의견'
         .form-group
           textarea.form-control(name='answer', rows=2 placeholder='answer here') 
-          &nbsp; 
-          a.btn.btn-xs.btn-default(href='/surveys/question/#{question._id}/edit') 수정 
-          &nbsp;
-          a.btn.btn-xs.btn-default(href='/surveys/question/#{question._id}?_method=DELETE') 삭제
+        a#q_button.btn.btn-xs.btn-default(href='/surveys/question/#{question._id}/edit') 수정 
+        a#q_button.btn.btn-xs.btn-default(href='/surveys/question/#{question._id}?_method=DELETE') 삭제
       if question.type === '객관식'
         .radio
           label
@@ -37,9 +33,8 @@ ul#sheet.list-unstyled
           label
             input(type='radio', name='selection', value=question.selection[0].selection4) 
             span #{question.selection[0].selection4}
-        a.btn.btn-xs.btn-default(href='/surveys/question/#{question._id}/edit') 수정 
-        &nbsp;
-        a.btn.btn-xs.btn-default(href='/surveys/question/#{question._id}?_method=DELETE') 삭제       
+        a#q_button.btn.btn-xs.btn-default(href='/surveys/question/#{question._id}/edit') 수정 
+        a#q_button.btn.btn-xs.btn-default(href='/surveys/question/#{question._id}?_method=DELETE') 삭제       
 br
 br
 a.btn.btn-default(href='/surveys/') 목록
