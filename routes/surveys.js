@@ -222,48 +222,69 @@ router.post('/:id/sheet/thanks', function(req, res, next) {
       cnt++;
     }
     var ans = '';
-    for(var k=0; k<questions.length; k++) {
-      for(var j in key) {
-        if(key[j]===questions[k].id) {
-          ans = value[j];
-        }
-      }
+    var q_id = '';
 
-      if(questions[k].type==='객관식') {
-        Answer.findOne({question_id: questions[k].id}, function(err, temp) {
-          if (temp===null) {
-            temp = new Answer({
-              survey_id: req.params.id,
-              question_id: questions[k].id,
-              email: req.body.email
-            });
+    function myloop(k, callback) {
+      if(k<questions.length) {
+        for(var j in key) {
+          if(key[j]===questions[k].id) {
+            ans = value[j];
+            q_id = questions[k].id;
+            console.log(q_id);
           }
-          if(ans==1) {
-            temp.selection[0].selection1 = answer.selection[0].selection1+1;
-          } else if(ans==2) {
-            temp.selection[0].selection2 = answer.selection[0].selection2+1;
-          } else if(ans==3) {
-            temp.selection[0].selection3 = answer.selection[0].selection3+1;
-          } else if(ans==4) {
-            temp.selection[0].selection4 = answer.selection[0].selection4+1;
-          }
-        });
+        }
+        if(questions[k].type==='객관식') {
+          console.log('1: ' + q_id);
+          Answer.findOne({question_id: q_id}, function(err, temp) {
+            console.log('2: ' + q_id);
+            if (temp===null) {
+              temp = new Answer({
+                survey_id: req.params.id,
+                question_id: q_id,
+                email: req.body.email
+              });
+              temp.selection.push({
+                selection1: 0,
+                selection2: 0,
+                selection3: 0,
+                selection4: 0
+              });
+              temp.save();
+            }
+            if(ans==1) {
+              temp.selection[0].selection1 = temp.selection[0].selection1+1;
+            } else if(ans==2) {
+              temp.selection[0].selection2 = temp.selection[0].selection2+1;
+            } else if(ans==3) {
+              temp.selection[0].selection3 = temp.selection[0].selection3+1;
+            } else if(ans==4) {
+              temp.selection[0].selection4 = temp.selection[0].selection4+1;
+            }
+            temp.save();
+            myloop(k+1, callback);
+          });
+        } else {
+          var answer = new Answer({
+            survey_id: req.params.id,
+            question_id: q_id,
+            answer: ans,
+            email: req.body.email
+          });
+          answer.save();
+          myloop(k+1, callback);
+        }
       } else {
-        var answer = new Answer({
-          survey_id: req.params.id,
-          question_id: questions[k].id,
-          answer: ans,
-          email: req.body.email
-        });
-        answer.answer = ans;
+        callback();
       }
-      answer.save();
     }
-    Survey.findByIdAndUpdate(req.params.id, {$inc: {numAnswer: 1}}, function(err, survey) {
-      if (err) {
-        return next(err);
-      }
-      res.render('surveys/thanks');
+
+    myloop(0, function() {
+      Survey.findByIdAndUpdate(req.params.id, {$inc: {numAnswer: 1}}, function(err, survey) {
+        if (err) {
+          return next(err);
+        }
+        res.render('surveys/thanks');
+      });
     });
   });
 });
