@@ -186,6 +186,7 @@ router.post('/:id/questions', function(req, res, next) {
           return next(err);
         }
       });
+      req.flash('success', '질문이 생성되었습니다.');
       res.redirect('/surveys/' + req.params.id);
     });
   });
@@ -208,84 +209,90 @@ router.get('/:id/sheet', function(req, res, next) {
 
 /* NEW answer*/
 router.post('/:id/sheet/thanks', function(req, res, next) {
-  Question.find({survey_id: req.params.id}, function(err, questions) {
-    if (err) {
-      return next(err);
-    }
-    var value = [];
-    var key = [];
-    var cnt = 0;
-    for (var i in req.body)
-    {
-      key[cnt] = i;
-      value[cnt] = req.body[i];
-      cnt++;
-    }
-    var ans = '';
-    var q_id = '';
-
-    function myloop(k, callback) {
-      if(k<questions.length) {
-        for(var j in key) {
-          if(key[j]===questions[k].id) {
-            ans = value[j];
-            q_id = questions[k].id;
-            console.log(q_id);
-          }
-        }
-        if(questions[k].type==='객관식') {
-          console.log('1: ' + q_id);
-          Answer.findOne({question_id: q_id}, function(err, temp) {
-            console.log('2: ' + q_id);
-            if (temp===null) {
-              temp = new Answer({
-                survey_id: req.params.id,
-                question_id: q_id,
-                email: req.body.email
-              });
-              temp.selection.push({
-                selection1: 0,
-                selection2: 0,
-                selection3: 0,
-                selection4: 0
-              });
-              temp.save();
-            }
-            if(ans==1) {
-              temp.selection[0].selection1 = temp.selection[0].selection1+1;
-            } else if(ans==2) {
-              temp.selection[0].selection2 = temp.selection[0].selection2+1;
-            } else if(ans==3) {
-              temp.selection[0].selection3 = temp.selection[0].selection3+1;
-            } else if(ans==4) {
-              temp.selection[0].selection4 = temp.selection[0].selection4+1;
-            }
-            temp.save();
-            myloop(k+1, callback);
-          });
-        } else {
-          var answer = new Answer({
-            survey_id: req.params.id,
-            question_id: q_id,
-            answer: ans,
-            email: req.body.email
-          });
-          answer.save();
-          myloop(k+1, callback);
-        }
-      } else {
-        callback();
-      }
-    }
-
-    myloop(0, function() {
-      Survey.findByIdAndUpdate(req.params.id, {$inc: {numAnswer: 1}}, function(err, survey) {
+  Answer.findOne({email: req.body.email}, function(err, temp) {
+    if(temp!=null) {
+      req.flash('danger', '이미 응답한 이메일 입니다.');
+      res.redirect('/surveys/' + req.params.id + '/sheet');
+    } else {
+      Question.find({survey_id: req.params.id}, function(err, questions) {
         if (err) {
           return next(err);
         }
-        res.render('surveys/thanks');
+        var value = [];
+        var key = [];
+        var cnt = 0;
+        for (var i in req.body)
+        {
+          key[cnt] = i;
+          value[cnt] = req.body[i];
+          cnt++;
+        }
+        var ans = '';
+        var q_id = '';
+
+        function myloop(k, callback) {
+          if(k<questions.length) {
+            for(var j in key) {
+              if(key[j]===questions[k].id) {
+                ans = value[j];
+                q_id = questions[k].id;
+                console.log(q_id);
+              }
+            }
+            if(questions[k].type==='객관식') {
+              console.log('1: ' + q_id);
+              Answer.findOne({question_id: q_id}, function(err, temp) {
+                console.log('2: ' + q_id);
+                if (temp===null) {
+                  temp = new Answer({
+                    survey_id: req.params.id,
+                    question_id: q_id,
+                    email: req.body.email
+                  });
+                  temp.selection.push({
+                    selection1: 0,
+                    selection2: 0,
+                    selection3: 0,
+                    selection4: 0
+                  });
+                  temp.save();
+                }
+                if(ans==1) {
+                  temp.selection[0].selection1 = temp.selection[0].selection1+1;
+                } else if(ans==2) {
+                  temp.selection[0].selection2 = temp.selection[0].selection2+1;
+                } else if(ans==3) {
+                  temp.selection[0].selection3 = temp.selection[0].selection3+1;
+                } else if(ans==4) {
+                  temp.selection[0].selection4 = temp.selection[0].selection4+1;
+                }
+                temp.save();
+                myloop(k+1, callback);
+              });
+            } else {
+              var answer = new Answer({
+                survey_id: req.params.id,
+                question_id: q_id,
+                answer: ans,
+                email: req.body.email
+              });
+              answer.save();
+              myloop(k+1, callback);
+            }
+          } else {
+            callback();
+          }
+        }
+        myloop(0, function() {
+          Survey.findByIdAndUpdate(req.params.id, {$inc: {numAnswer: 1}}, function(err, survey) {
+            if (err) {
+              return next(err);
+            }
+            res.render('surveys/thanks');
+          });
+        });
       });
-    });
+    }
   });
 });
 
