@@ -210,7 +210,7 @@ router.get('/:id/sheet', function(req, res, next) {
 /* NEW answer*/
 router.post('/:id/sheet/thanks', function(req, res, next) {
   Answer.findOne({email: req.body.email}, function(err, temp) {
-    if(temp!=null) {
+    if(temp!==null) {
       req.flash('danger', '이미 응답한 이메일 입니다.');
       res.redirect('/surveys/' + req.params.id + '/sheet');
     } else {
@@ -236,13 +236,10 @@ router.post('/:id/sheet/thanks', function(req, res, next) {
               if(key[j]===questions[k].id) {
                 ans = value[j];
                 q_id = questions[k].id;
-                console.log(q_id);
               }
             }
             if(questions[k].type==='객관식') {
-              console.log('1: ' + q_id);
               Answer.findOne({question_id: q_id}, function(err, temp) {
-                console.log('2: ' + q_id);
                 if (temp===null) {
                   temp = new Answer({
                     survey_id: req.params.id,
