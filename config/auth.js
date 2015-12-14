@@ -41,7 +41,7 @@ module.exports = function(passport) {
     // 이 부분을 여러분 Facebook App의 정보로 수정해야 합니다.
     clientID : '1656364481311025',
     clientSecret : 'da0f345233eed7c9cc5ebf13c849a1fd',
-    callbackURL : 'https://blooming-ravine-6503.herokuapp.com/auth/facebook',
+    callbackURL : 'https://blooming-ravine-6503.herokuapp.com/auth/facebook/callback',
     profileFields : ["emails", "displayName", "name", "photos"]
   }, function(token, refreshToken, profile, done) {
     console.log(profile);
