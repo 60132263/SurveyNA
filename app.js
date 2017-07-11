@@ -16,6 +16,18 @@ var users = require('./routes/users');
 var surveys = require('./routes/surveys');
 var routeAuth = require('./routes/auth');
 
+// loggly
+var winston  = require('winston');
+require('winston-loggly-bulk');
+winston.add(winston.transports.Loggly, {
+    inputToken: "TOKEN",
+    subdomain: "SUBDOMAIN",
+    tags: ["Winston-NodeJS"],
+    json:true
+});
+winston.log('info',"Hello World from Node.js!")
+// -- loggly
+
 var app = express();
 
 // view engine setup
