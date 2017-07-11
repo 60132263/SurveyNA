@@ -16,33 +16,6 @@ var users = require('./routes/users');
 var surveys = require('./routes/surveys');
 var routeAuth = require('./routes/auth');
 
-// loggly
-var winston  = require('winston');
-require('winston-loggly-bulk');
-winston.add(winston.transports.Loggly, {
-    inputToken: "e3c061ad-70ff-42c8-9292-1a50af963158",
-    subdomain: "nablyy",
-    tags: ["Winston-NodeJS"],
-    json:true
-});
-winston.log('info',"Hello World from Node.js!")
-// -- loggly
-
-//logz.io
-var logz = require('logzio-nodejs').createLogger({
-    token: 'zUnfdxbQUezIslDJaUQvVuODNYdrSjQx',
-    host: 'listener.logz.io',
-    type: 'nodejs'
-});
-logz.log('This is a log message');
-var obj = { 
-    message: 'Some log message', 
-    param1: 'val1',
-    param2: 'val2'
-};
-logz.log(obj);
-// -- logz.io
-
 var app = express();
 
 // view engine setup
@@ -80,7 +53,6 @@ app.use(passport.session());
 
 app.use(function(req, res, next) {
   console.log("REQ USER", req.user);
-  logz.log(req.user);
   res.locals.currentUser = req.user;
   res.locals.flashMessages = req.flash();
   next();
