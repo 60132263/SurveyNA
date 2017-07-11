@@ -20,8 +20,8 @@ var routeAuth = require('./routes/auth');
 var winston  = require('winston');
 require('winston-loggly-bulk');
 winston.add(winston.transports.Loggly, {
-    inputToken: "TOKEN",
-    subdomain: "SUBDOMAIN",
+    inputToken: "e3c061ad-70ff-42c8-9292-1a50af963158",
+    subdomain: "nablyy",
     tags: ["Winston-NodeJS"],
     json:true
 });
