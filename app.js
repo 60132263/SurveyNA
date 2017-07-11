@@ -80,7 +80,7 @@ app.use(passport.session());
 
 app.use(function(req, res, next) {
   console.log("REQ USER", req.user);
-  logz.log("REQ USER", req.user);
+  logz.log(req.user);
   res.locals.currentUser = req.user;
   res.locals.flashMessages = req.flash();
   next();
