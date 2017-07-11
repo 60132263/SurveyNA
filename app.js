@@ -31,7 +31,7 @@ winston.log('info',"Hello World from Node.js!")
 //logz.io
 var logger = require('logzio-nodejs').createLogger({
     token: 'zUnfdxbQUezIslDJaUQvVuODNYdrSjQx',
-    host: 'listener.logz.io',
+    host: 'listener.logz.io'
 });
 logger.log('This is a log message');
 var obj = { 
